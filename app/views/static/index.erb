@@ -1,2 +1,17 @@
 <h1>Hello World</h1>
 <p>See Me in views/static/index.html.erb</p>
+
+<form action="/" method="post">
+	Enter URL:
+	<input type="text" name="long_url">
+	<input type="submit" value="Submit">
+</form>
+
+<h2><%= Url.order("updated_at").last.short_url%></h2> 
+
+<h3><%= @counter%></h3>
+
+<h4><%= Url.order("updated_at").last.count_short_url%></h4>
+
+
+

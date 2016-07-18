@@ -1,31 +1,43 @@
+#http://localhost:9393/
+
 require 'byebug'
+enable :sessions #enables multiple users to use it from different computers, each computer having a different database
 
 get '/' do
-	@counter = Url.all.count #counting number of short urls generated altogether
-	#can't put counter under 'post '/''. Under post, it redirects at the end to the index page, thus counter is lost! 
+	@url = Url.find(session[:id]) if session[:id]
+	@counter = Url.all.count #instance variable will not be carried over by redirect, thus have to declare instance variable at 'get'
   erb :"static/index"
 end
 
+#below is how you do it without sessions
+##########
+# post '/' do
+# 	url = Url.find_by(long_url: params["long_url"])
+# 	if url 
+# 		url.update(updated_at: Time.now)
+# 		url.save
+# 	else
+# 		Url.create(long_url: params["long_url"], short_url: Url.shorten)
+# 	end
+# 	redirect "/"
+# end
+##########
+
 post '/' do
 	url = Url.find_by(long_url: params["long_url"])
-	if url
-		url.save
-		#@counter = Url.all.count #can't put this here!!
-	else
-		Url.create(long_url: params["long_url"], short_url: Url.shorten)
+	if url.nil?
+		url = Url.create(long_url: params["long_url"], short_url: Url.shorten)
 	end
+	session[:id] = url.id
 	redirect "/"
 end
 
 get '/:short_url' do
+	hyperlink = Url.find_by(short_url: params["short_url"])
+	hyperlink.count_short_url += 1
+	hyperlink.save
+	redirect hyperlink.long_url
 
-	Url.all.each do |item|
-		if item.short_url.include?(params["short_url"])
-			redirect item.long_url
-			item.count_short_url += 1
-			item.save
-		end
-	end
 end
 
 
@@ -35,10 +47,5 @@ end
 #'post' is to do something to the page
 #'post' always follows with a 'redirect' since 'post' alone would just generate a blank page
 
-################this is a seperating line ##################
-
-#@hyperlink = Url.find_by(short_url: params["short_url"])
-# redirect @hyperlink.long_url
-#the above two lines only function as hyperlink, but do not count the number of times people use the hyperlink. 
 
 

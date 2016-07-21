@@ -1,6 +1,6 @@
 #http://localhost:9393/
 
-require 'byebug'
+
 
 get '/' do
 	@counter = Url.all.count #instance variable will not be carried over by redirect, thus have to declare instance variable at 'get'

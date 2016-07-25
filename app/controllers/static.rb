@@ -1,9 +1,6 @@
 #http://localhost:9393/
 
-
-
 get '/' do
-	@counter = Url.all.count #instance variable will not be carried over by redirect, thus have to declare instance variable at 'get'
   erb :"static/index"
 end
 
@@ -27,8 +24,12 @@ post '/' do
 	if url.save
 		url.to_json
 	else
-		url.errors.messages.to_json #no need to redirect with AJAX
+		url.errors.messages.to_json #no need to redirect to '/' when using AJAX
 	end
+end
+
+get '/number' do #this must be above 'get /:short_url'
+	Url.count.to_json
 end
 
 get '/:short_url' do #the '/:short_url' means that the count will only increase with every click on the short url
@@ -36,7 +37,6 @@ get '/:short_url' do #the '/:short_url' means that the count will only increase 
 	hyperlink.count_short_url += 1 #how does the counting work?
 	hyperlink.save
 	redirect hyperlink.long_url
-
 end
 
 

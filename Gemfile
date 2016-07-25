@@ -7,6 +7,7 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'sinatra-contrib'
 
+
 # Adding thin gem as advised
 gem 'thin'
 
@@ -35,3 +36,4 @@ group :production do
 	gem 'rails_12factor' # Heroku Gem Supports
 	gem 'puma' # Using puma for
 end
+
